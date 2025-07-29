@@ -1,8 +1,3 @@
-variable "hcloud_token" {
-  description = "Hetzner Cloud API token"
-  type        = string
-}
-
 variable "hcloud_ssh_key_name" {
   description = "Name of the SSH key in Hetzner Cloud project to use for maintenance access"
   type        = string
