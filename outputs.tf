@@ -3,6 +3,6 @@ output "node_ip" {
 }
 
 output "wireguard_client_config" {
-  value = data.wireguard_config_document.client[0].conf
+  value     = var.wireguard_tunnel_enabled ? data.wireguard_config_document.client[0].conf : ""
   sensitive = true
 }
