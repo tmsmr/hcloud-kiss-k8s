@@ -31,9 +31,36 @@ storage:
           ${wg_config}
 %{endif }
 
-%{if wg_config != "" }
+    - path: /usr/local/bin/run-k3s-installer
+      mode: 0755
+      contents:
+        inline: |
+          #!/usr/bin/env bash
+          set -xe
+          curl -sfL https://get.k3s.io | sh -s - server \
+            %{ if wg_config != "" }--tls-san ${wg_address}%{ endif } \
+            --node-name ${hostname} \
+            --write-kubeconfig-mode 644
+
 systemd:
   units:
+    - name: run-k3s-installer.service
+      enabled: true
+      contents: |
+        [Unit]
+        After=network-online.target
+        Wants=network-online.target
+        Before=zincati.service
+        ConditionPathExists=!/usr/local/bin/k3s
+        [Service]
+        RemainAfterExit=yes
+        Type=oneshot
+        ExecStart=/usr/local/bin/run-k3s-installer
+        ExecStartPost=/usr/bin/systemctl reboot
+        [Install]
+        WantedBy=multi-user.target
+
+%{if wg_config != "" }
     - name: wg-quick@wg0.service
       enabled: true
 %{endif }

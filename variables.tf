@@ -15,7 +15,7 @@ variable "deployment_name" {
 }
 
 variable "deletion_protection_enabled" {
-  description = "Enable deletion protection for vps"
+  description = "Enable deletion protection for the VPS"
   type        = bool
   default     = false
 }
