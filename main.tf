@@ -1,6 +1,6 @@
 module "fcos_node_config" {
   source = "git::https://github.com/tmsmr/hcloud-fcos-takeover.git?ref=v0.3.0"
-  butane_config = templatefile("./tpl/node.butane", {
+  butane_config = templatefile("${path.module}/tpl/node.butane", {
     maintance_key      = data.hcloud_ssh_key.maintenance_key.public_key
     hostname           = var.deployment_name
     update_daily_start = var.maintenance_window_start
