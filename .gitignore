@@ -2,3 +2,6 @@
 .idea/
 .terraform/
 .terraform.lock.hcl
+.terraform.tfstate
+.terraform.tfstate.backup
+secrets.auto.tfvars

@@ -1,0 +1,39 @@
+variant: fcos
+version: 1.5.0
+passwd:
+  users:
+    - name: core
+      ssh_authorized_keys:
+        - ${maintance_key}
+
+storage:
+  files:
+    - path: /etc/hostname
+      mode: 0644
+      contents:
+        inline: ${hostname}
+
+    - path: /etc/zincati/config.d/55-updates-strategy.toml
+      contents:
+        inline: |
+          [updates]
+          strategy = "periodic"
+          [[updates.periodic.window]]
+          days = [ "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" ]
+          start_time = "${update_daily_start}"
+          length_minutes = 60
+
+%{if wg_config != "" }
+    - path: /etc/wireguard/wg0.conf
+      mode: 0600
+      contents:
+        inline: |
+          ${wg_config}
+%{endif }
+
+%{if wg_config != "" }
+systemd:
+  units:
+    - name: wg-quick@wg0.service
+      enabled: true
+%{endif }
