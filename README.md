@@ -18,25 +18,25 @@ provider "hcloud" {
   token = "xxx"
 }
 
-module "k8s" {
-  source              = "git::https://github.com/tmsmr/hcloud-kiss-k8s.git?ref=main"
-  deployment_name     = "my-k8s"
-  hcloud_ssh_key_name = "johndoe"
+resource "hcloud_ssh_key" "client_key" {
+  name       = "johndoe"
+  public_key = "ssh-rsa xxx"
+}
+
+module "hcloud-kiss-k8s" {
+  source            = "git::https://github.com/tmsmr/hcloud-kiss-k8s.git?ref=v0.2.0"
+  hcloud_ssh_key_id = hcloud_ssh_key.client_key.id
 }
 
 resource "local_sensitive_file" "wg_conf" {
-  filename = "./my-k8s.conf"
-  content  = module.k8s.wireguard_client_config
+  filename = "./hcloud-kiss-k8s-tunnel.conf"
+  content  = module.hcloud-kiss-k8s.wireguard_client_config
 }
 ```
 - wait... (5 min?)
-- retrieve and adjust kubeconfig
+- connect and play
 ```bash
-sudo wg-quick up ./my-k8s.conf
-scp core@10.20.1.1:/etc/rancher/k3s/k3s.yaml .
-sed -i '' 's/server:.*$/server: https:\/\/10.20.1.1:6443/g' k3s.yaml
-```
-- interact
-```
-KUBECONFIG=./k3s.yaml kubectl get node
+sudo wg-quick up ./hcloud-kiss-k8s-tunnel.conf
+ssh core@10.20.1.1
+kubectl get node
 ```
