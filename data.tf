@@ -3,5 +3,5 @@ data "hcloud_datacenter" "dc" {
 }
 
 data "hcloud_ssh_key" "maintenance_key" {
-  name = var.hcloud_ssh_key_name
+  id   = var.hcloud_ssh_key_id
 }

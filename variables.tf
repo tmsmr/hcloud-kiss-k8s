@@ -1,5 +1,5 @@
-variable "hcloud_ssh_key_name" {
-  description = "Name of the SSH key in Hetzner Cloud project to use for maintenance access"
+variable "hcloud_ssh_key_id" {
+  description = "SSH key ID in Hetzner Cloud project to use for maintenance access"
   type        = string
 }
 
@@ -51,8 +51,20 @@ variable "k3s_installer_args" {
   default     = ""
 }
 
-variable "maintenance_window_start" {
-  description = "Start time of the maintenance window (HH:MM format)"
+variable "maintenance_window_start_k3s" {
+  description = "Start time of the maintenance window (HH:MM format) for k3s updates"
   type        = string
   default     = "03:00"
+}
+
+variable "maintenance_window_end_k3s" {
+  description = "End time of the maintenance window (HH:MM format) for k3s updates"
+  type        = string
+  default     = "03:30"
+}
+
+variable "maintenance_window_start_node" {
+  description = "Start time of the maintenance window (HH:MM format) for node updates"
+  type        = string
+  default     = "03:30"
 }

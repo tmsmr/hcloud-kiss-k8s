@@ -20,7 +20,7 @@ storage:
           strategy = "periodic"
           [[updates.periodic.window]]
           days = [ "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" ]
-          start_time = "${update_daily_start}"
+          start_time = "${node_update_daily_start}"
           length_minutes = 60
 
 %{if wg_config != "" }
@@ -41,6 +41,42 @@ storage:
             %{ if wg_config != "" }--tls-san ${wg_address}%{ endif } \
             --node-name ${hostname} \
             --write-kubeconfig-mode 644 ${k3s_installer_args}
+
+    - path: /usr/local/bin/install-system-upgrade-controller
+      mode: 0755
+      contents:
+        inline: |
+          #!/usr/bin/env bash
+          set -xe
+          export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+          kubectl apply -f https://github.com/rancher/system-upgrade-controller/releases/latest/download/crd.yaml
+          kubectl apply -f https://github.com/rancher/system-upgrade-controller/releases/latest/download/system-upgrade-controller.yaml
+          cat <<'EOF' | kubectl apply -f -
+          apiVersion: upgrade.cattle.io/v1
+          kind: Plan
+          metadata:
+            name: upgrade-plan
+            namespace: system-upgrade
+          spec:
+            concurrency: 1
+            cordon: false
+            serviceAccountName: system-upgrade
+            upgrade:
+              image: rancher/k3s-upgrade
+            channel: https://update.k3s.io/v1-release/channels/stable
+            window:
+              days:
+                - monday
+                - tuesday
+                - wednesday
+                - thursday
+                - friday
+                - saturday
+                - sunday
+              startTime: ${k3s_update_daily_start}
+              endTime: ${k3s_update_daily_end}
+              timeZone: UTC
+          EOF
 
     - path: /var/lib/rancher/k3s/agent/etc/kubelet.conf.d/99-shutdown-grace-period.conf
       mode: 0644
@@ -74,11 +110,11 @@ systemd:
       enabled: true
 %{endif }
 
-    - name: "k3s-cleanup-pods.service"
+    - name: k3s-cleanup-pods.service
       enabled: true
       contents: |
         [Unit]
-        Wants=k3s.service
+        After=k3s.service
         ConditionPathExists=/usr/local/bin/k3s
         [Service]
         Type=oneshot
@@ -86,5 +122,20 @@ systemd:
         ExecStart=kubectl delete pods --field-selector status.phase=Failed -A --ignore-not-found=true
         Restart=on-failure
         RestartSec=30
+        [Install]
+        WantedBy=multi-user.target
+
+    - name: run-install-system-upgrade-controller.service
+      enabled: true
+      contents: |
+        [Unit]
+        After=k3s.service
+        ConditionPathExists=/usr/local/bin/k3s
+        ConditionPathExists=/usr/local/bin/install-system-upgrade-controller
+        [Service]
+        RemainAfterExit=yes
+        Type=oneshot
+        ExecStart=/usr/local/bin/install-system-upgrade-controller
+        ExecStartPost=rm /usr/local/bin/install-system-upgrade-controller
         [Install]
         WantedBy=multi-user.target
