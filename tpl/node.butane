@@ -40,7 +40,16 @@ storage:
           curl -sfL https://get.k3s.io | sh -s - server \
             %{ if wg_config != "" }--tls-san ${wg_address}%{ endif } \
             --node-name ${hostname} \
-            --write-kubeconfig-mode 644
+            --write-kubeconfig-mode 644 ${k3s_installer_args}
+
+    - path: /var/lib/rancher/k3s/agent/etc/kubelet.conf.d/99-shutdown-grace-period.conf
+      mode: 0644
+      contents:
+        inline: |
+          apiVersion: kubelet.config.k8s.io/v1beta1
+          kind: KubeletConfiguration
+          shutdownGracePeriod: 60s
+          shutdownGracePeriodCriticalPods: 10s
 
 systemd:
   units:
@@ -64,3 +73,18 @@ systemd:
     - name: wg-quick@wg0.service
       enabled: true
 %{endif }
+
+    - name: "k3s-cleanup-pods.service"
+      enabled: true
+      contents: |
+        [Unit]
+        Wants=k3s.service
+        ConditionPathExists=/usr/local/bin/k3s
+        [Service]
+        Type=oneshot
+        Environment=KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+        ExecStart=kubectl delete pods --field-selector status.phase=Failed -A --ignore-not-found=true
+        Restart=on-failure
+        RestartSec=30
+        [Install]
+        WantedBy=multi-user.target

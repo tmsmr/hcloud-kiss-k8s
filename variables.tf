@@ -45,6 +45,12 @@ variable "public_k8s_api_enabled" {
   default     = false
 }
 
+variable "k3s_installer_args" {
+  description = "Additional arguments for the K3s installer"
+  type        = string
+  default     = ""
+}
+
 variable "maintenance_window_start" {
   description = "Start time of the maintenance window (HH:MM format)"
   type        = string

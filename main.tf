@@ -6,6 +6,7 @@ module "fcos_node_config" {
     update_daily_start = var.maintenance_window_start
     wg_config          = var.wireguard_tunnel_enabled ? indent(10, data.wireguard_config_document.server[0].conf) : ""
     wg_address         = var.wireguard_tunnel_enabled ? local.wg_server_ip : ""
+    k3s_installer_args = var.k3s_installer_args
   })
 }
 
