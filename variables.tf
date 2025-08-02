@@ -68,3 +68,9 @@ variable "maintenance_window_start_node" {
   type        = string
   default     = "03:30"
 }
+
+variable "vps_backups_enabled" {
+  description = "Enable automatic backups for the VPS"
+  type        = bool
+  default     = false
+}

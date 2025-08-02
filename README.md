@@ -87,10 +87,12 @@ $ kubectl get node # and so on...
 | maintenance_window_start_k3s  | string | 03:00           | Start time of the maintenance window (HH:MM format) for k3s updates  |
 | maintenance_window_end_k3s    | string | 03:30           | End time of the maintenance window (HH:MM format) for k3s updates    |
 | maintenance_window_start_node | string | 03:30           | Start time of the maintenance window (HH:MM format) for node updates |
+| vps_backups_enabled           | bool   | false           | Enable automatic backups of the VPS                                  |
 
 More docs to come soon™...
 
 Reach out to me if you need help.
 
 ## Disclaimer
+
 Check *LICENSE* for details. If this tool eats your dog, it's not my fault.

@@ -24,6 +24,7 @@ resource "hcloud_server" "fcos_node" {
     ipv4_enabled = true
     ipv6_enabled = false
   }
+  backups            = var.vps_backups_enabled
   user_data          = module.fcos_node_config.user_data
   delete_protection  = var.deletion_protection_enabled
   rebuild_protection = var.deletion_protection_enabled
