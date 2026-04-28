@@ -18,19 +18,25 @@ variable "deletion_protection_enabled" {
 variable "vps_type" {
   description = "Hetzner Cloud VPS flavor"
   type        = string
-  default     = "cax11"
+  default     = "cx23"
 }
 
-variable "hcloud_datacenter" {
-  description = "Hetzner Cloud datacenter name"
+variable "hcloud_location" {
+  description = "Hetzner Cloud location name"
   type        = string
-  default     = "fsn1-dc14"
+  default     = "nbg1"
 }
 
 variable "wireguard_tunnel_enabled" {
   description = "Enable WireGuard tunnel for additional security"
   type        = bool
   default     = true
+}
+
+variable "wireguard_subnet" {
+  description = "Subnet for the VPN configuration"
+  type        = string
+  default     = "10.20.1.0/24"
 }
 
 variable "public_ssh_enabled" {
@@ -55,22 +61,55 @@ variable "maintenance_window_start_k3s" {
   description = "Start time of the maintenance window (HH:MM format) for k3s updates"
   type        = string
   default     = "03:00"
+
+  validation {
+    condition     = can(regex("^([01][0-9]|2[0-3]):[0-5][0-9]$", var.maintenance_window_start_k3s))
+    error_message = "HH:MM format required"
+  }
 }
 
 variable "maintenance_window_end_k3s" {
   description = "End time of the maintenance window (HH:MM format) for k3s updates"
   type        = string
   default     = "03:30"
+
+  validation {
+    condition     = can(regex("^([01][0-9]|2[0-3]):[0-5][0-9]$", var.maintenance_window_end_k3s))
+    error_message = "HH:MM format required"
+  }
 }
 
 variable "maintenance_window_start_node" {
   description = "Start time of the maintenance window (HH:MM format) for node updates"
   type        = string
   default     = "03:30"
+
+  validation {
+    condition     = can(regex("^([01][0-9]|2[0-3]):[0-5][0-9]$", var.maintenance_window_start_node))
+    error_message = "HH:MM format required"
+  }
 }
 
 variable "vps_backups_enabled" {
   description = "Enable automatic backups for the VPS"
   type        = bool
   default     = false
+}
+
+variable "bootstrap_image" {
+  description = "Fedora image name for Hetzner Cloud bootstrap (must be compatible with hcloud-fcos-takeover)"
+  type        = string
+  default     = "fedora-43"
+}
+
+variable "node_shutdown_grace_period" {
+  description = "Total grace period for pod eviction during node shutdown"
+  type        = string
+  default     = "90s"
+}
+
+variable "node_shutdown_grace_period_critical_pods" {
+  description = "Grace period reserved for critical pods during node shutdown"
+  type        = string
+  default     = "20s"
 }

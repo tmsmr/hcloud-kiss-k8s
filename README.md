@@ -2,7 +2,8 @@
 
 *Poor Man's Kubernetes*
 
-Terraform module for deploying a single-node Kubernetes cluster on Hetzner Cloud, focused on maintainability and low
+Terraform module for deploying a single-node Kubernetes cluster on Hetzner Cloud, focused on simplicity, security,
+maintainability and low
 cost.
 
 → If you need a Kubernetes cluster for business-critical workloads, this is not the right solution.
@@ -41,7 +42,7 @@ resource "hcloud_ssh_key" "admin_key" {
 }
 
 module "k8s_node" {
-  source            = "git::https://github.com/tmsmr/hcloud-kiss-k8s.git?ref=v0.2.2"
+  source            = "git::https://github.com/tmsmr/hcloud-kiss-k8s.git?ref=v0.4.0"
   hcloud_ssh_key_id = hcloud_ssh_key.admin_key.id
 }
 
@@ -79,8 +80,9 @@ $ kubectl get node # and so on...
 | deployment_name               | string | hcloud-kiss-k8s | Name of the deployment                                               |
 | deletion_protection_enabled   | bool   | false           | Enable deletion protection for the VPS                               |
 | vps_type                      | string | cax11           | Hetzner Cloud VPS flavor                                             |
-| hcloud_datacenter             | string | fsn1-dc14       | Hetzner Cloud datacenter name                                        |
+| hcloud_location               | string | nbg1            | Hetzner Cloud location name                                          |
 | wireguard_tunnel_enabled      | bool   | true            | Enable WireGuard tunnel for additional security                      |
+| wireguard_subnet              | string | 10.20.1.0/24    | Subnet for the VPN configuration                                     |
 | public_ssh_enabled            | bool   | false           | Enable public SSH access                                             |
 | public_k8s_api_enabled        | bool   | false           | Enable public K8s API access                                         |
 | k3s_installer_args            | string |                 | Additional arguments for the K3s installer                           |
@@ -89,9 +91,12 @@ $ kubectl get node # and so on...
 | maintenance_window_start_node | string | 03:30           | Start time of the maintenance window (HH:MM format) for node updates |
 | vps_backups_enabled           | bool   | false           | Enable automatic backups of the VPS                                  |
 
-More docs to come soon™...
-
 Reach out to me if you need help.
+
+## Security Note
+
+⚠️ WireGuard private keys are stored in **plaintext** in `terraform.tfstate`. Use an encrypted remote backend and never
+commit state files to version control.
 
 ## Disclaimer
 

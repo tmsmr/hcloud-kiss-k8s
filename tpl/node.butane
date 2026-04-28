@@ -4,7 +4,7 @@ passwd:
   users:
     - name: core
       ssh_authorized_keys:
-        - ${maintance_key}
+        - ${maintenance_key}
 
 storage:
   files:
@@ -87,8 +87,8 @@ storage:
         inline: |
           apiVersion: kubelet.config.k8s.io/v1beta1
           kind: KubeletConfiguration
-          shutdownGracePeriod: 60s
-          shutdownGracePeriodCriticalPods: 10s
+          shutdownGracePeriod: ${node_shutdown_grace_period}
+          shutdownGracePeriodCriticalPods: ${node_shutdown_grace_period_critical_pods}
 
 systemd:
   units:
@@ -113,7 +113,7 @@ systemd:
       enabled: true
 %{endif }
 
-    - name: k3s-cleanup-pods.service
+    - name: k3s-cleanup-failed-pods.service
       enabled: true
       contents: |
         [Unit]
@@ -123,8 +123,19 @@ systemd:
         Type=oneshot
         Environment=KUBECONFIG=/etc/rancher/k3s/k3s.yaml
         ExecStart=kubectl delete pods --field-selector status.phase=Failed -A --ignore-not-found=true
-        Restart=on-failure
-        RestartSec=30
+        [Install]
+        WantedBy=multi-user.target
+
+    - name: k3s-cleanup-succeeded-pods.service
+      enabled: true
+      contents: |
+        [Unit]
+        After=k3s.service
+        ConditionPathExists=/usr/local/bin/k3s
+        [Service]
+        Type=oneshot
+        Environment=KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+        ExecStart=kubectl delete pods --field-selector status.phase=Succeeded -A --ignore-not-found=true
         [Install]
         WantedBy=multi-user.target
 
