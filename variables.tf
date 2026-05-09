@@ -90,6 +90,18 @@ variable "maintenance_window_start_node" {
   }
 }
 
+variable "public_ssh_allowed_cidrs" {
+  description = "CIDR blocks allowed for public SSH access"
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
+}
+
+variable "public_k8s_api_allowed_cidrs" {
+  description = "CIDR blocks allowed for public K8s API access"
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
+}
+
 variable "vps_backups_enabled" {
   description = "Enable automatic backups for the VPS"
   type        = bool

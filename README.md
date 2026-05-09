@@ -3,8 +3,7 @@
 *Poor Man's Kubernetes*
 
 Terraform module for deploying a single-node Kubernetes cluster on Hetzner Cloud, focused on simplicity, security,
-maintainability and low
-cost.
+maintainability and low cost.
 
 → If you need a Kubernetes cluster for business-critical workloads, this is not the right solution.
 
@@ -42,7 +41,7 @@ resource "hcloud_ssh_key" "admin_key" {
 }
 
 module "k8s_node" {
-  source            = "git::https://github.com/tmsmr/hcloud-kiss-k8s.git?ref=v0.4.0"
+  source            = "git::https://github.com/tmsmr/hcloud-kiss-k8s.git?ref=v0.3.1"
   hcloud_ssh_key_id = hcloud_ssh_key.admin_key.id
 }
 
@@ -76,22 +75,27 @@ $ kubectl get nodes # and so on...
 
 ⚠️ Most of the variables force the node to be re-created when changed. Take care!
 
-| Variable Name                 | Type   | Default         | Description                                                          |
-|-------------------------------|--------|-----------------|----------------------------------------------------------------------|
-| hcloud_ssh_key_id             | string |                 | SSH key ID in Hetzner Cloud project to use for maintenance access    |
-| deployment_name               | string | hcloud-kiss-k8s | Name of the deployment                                               |
-| deletion_protection_enabled   | bool   | false           | Enable deletion protection for the VPS                               |
-| vps_type                      | string | cax11           | Hetzner Cloud VPS flavor                                             |
-| hcloud_location               | string | nbg1            | Hetzner Cloud location name                                          |
-| wireguard_tunnel_enabled      | bool   | true            | Enable WireGuard tunnel for additional security                      |
-| wireguard_subnet              | string | 10.20.1.0/24    | Subnet for the VPN configuration                                     |
-| public_ssh_enabled            | bool   | false           | Enable public SSH access                                             |
-| public_k8s_api_enabled        | bool   | false           | Enable public K8s API access                                         |
-| k3s_installer_args            | string |                 | Additional arguments for the K3s installer                           |
-| maintenance_window_start_k3s  | string | 03:00           | Start time of the maintenance window (HH:MM format) for k3s updates  |
-| maintenance_window_end_k3s    | string | 03:30           | End time of the maintenance window (HH:MM format) for k3s updates    |
-| maintenance_window_start_node | string | 03:30           | Start time of the maintenance window (HH:MM format) for node updates |
-| vps_backups_enabled           | bool   | false           | Enable automatic backups of the VPS                                  |
+| Variable Name                            | Type         | Default         | Description                                                          |
+|------------------------------------------|--------------|-----------------|----------------------------------------------------------------------|
+| hcloud_ssh_key_id                        | string       |                 | SSH key ID in Hetzner Cloud project to use for maintenance access    |
+| deployment_name                          | string       | hcloud-kiss-k8s | Name of the deployment                                               |
+| deletion_protection_enabled              | bool         | false           | Enable deletion protection for the VPS                               |
+| vps_type                                 | string       | cx23            | Hetzner Cloud VPS flavor                                             |
+| hcloud_location                          | string       | nbg1            | Hetzner Cloud location name                                          |
+| wireguard_tunnel_enabled                 | bool         | true            | Enable WireGuard tunnel for additional security                      |
+| wireguard_subnet                         | string       | 10.20.1.0/24    | Subnet for the VPN configuration                                     |
+| public_ssh_enabled                       | bool         | false           | Enable public SSH access                                             |
+| public_k8s_api_enabled                   | bool         | false           | Enable public K8s API access                                         |
+| public_ssh_allowed_cidrs                 | list(string) | ["0.0.0.0/0"]   | CIDR blocks allowed for public SSH access                            |
+| public_k8s_api_allowed_cidrs             | list(string) | ["0.0.0.0/0"]   | CIDR blocks allowed for public Kubernetes API access                 |
+| k3s_installer_args                       | string       |                 | Additional arguments for the K3s installer                           |
+| maintenance_window_start_k3s             | string       | 03:00           | Start time of the maintenance window (HH:MM format) for k3s updates  |
+| maintenance_window_end_k3s               | string       | 03:30           | End time of the maintenance window (HH:MM format) for k3s updates    |
+| maintenance_window_start_node            | string       | 03:30           | Start time of the maintenance window (HH:MM format) for node updates |
+| vps_backups_enabled                      | bool         | false           | Enable automatic backups of the VPS                                  |
+| bootstrap_image                          | string       | fedora-43       | Fedora image name for Hetzner Cloud bootstrap                        |
+| node_shutdown_grace_period               | string       | 90s             | Total grace period for pod eviction during node shutdown             |
+| node_shutdown_grace_period_critical_pods | string       | 20s             | Grace period reserved for critical pods during node shutdown         |
 
 Reach out to me if you need help.
 
