@@ -41,7 +41,7 @@ resource "hcloud_ssh_key" "admin_key" {
 }
 
 module "k8s_node" {
-  source            = "git::https://github.com/tmsmr/hcloud-kiss-k8s.git?ref=v0.3.1"
+  source            = "git::https://github.com/tmsmr/hcloud-kiss-k8s.git?ref=v0.3.2"
   hcloud_ssh_key_id = hcloud_ssh_key.admin_key.id
 }
 

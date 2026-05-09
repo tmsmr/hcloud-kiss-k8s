@@ -61,9 +61,6 @@ storage:
             concurrency: 1
             cordon: true
             serviceAccountName: system-upgrade
-            nodeSelector:
-              matchLabels:
-                node.kubernetes.io/instance-type: k3s
             upgrade:
               image: rancher/k3s-upgrade
             channel: https://update.k3s.io/v1-release/channels/stable
