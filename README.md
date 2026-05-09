@@ -57,7 +57,7 @@ resource "local_sensitive_file" "wireguard_conf" {
 It will take a while until the installation is completed after the VPS was created.
 Take a look at [hcloud-fcos-takeover](https://github.com/tmsmr/hcloud-fcos-takeover)
 and [Butane config](./tpl/node.butane) for more details.
-Depending on the VPS type this takes around 5 Minutes.
+Depending on the VPS type this takes around 5 minutes.
 You might want to check the status by looking at the console output and/or the CPU usage of the VPS in the Hetzner Cloud
 Console.
 
@@ -66,13 +66,15 @@ Console.
 ```bash
 wg-quick up ./k8s-node.conf # or some other client from https://www.wireguard.com/install/
 ssh core@10.20.1.1 # yes, this is static
-$ kubectl get node # and so on...
+$ kubectl get nodes # and so on...
 ```
 
 ...or you grab the kubeconfig file from the node (`/etc/rancher/k3s/k3s.yaml`) and change the server address to
 `https://10.20.1.1:6443` to reach the Kubernetes API directly.
 
 ## Variables/Customization
+
+⚠️ Most of the variables force the node to be re-created when changed. Take care!
 
 | Variable Name                 | Type   | Default         | Description                                                          |
 |-------------------------------|--------|-----------------|----------------------------------------------------------------------|
@@ -100,4 +102,4 @@ commit state files to version control.
 
 ## Disclaimer
 
-Check *LICENSE* for details. If this tool eats your dog, it's not my fault.
+Check the `LICENSE` file for details. If this tool eats your dog, it's not my fault.
