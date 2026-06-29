@@ -35,4 +35,12 @@ resource "hcloud_server" "fcos_node" {
   user_data          = module.fcos_node_config.user_data
   delete_protection  = var.deletion_protection_enabled
   rebuild_protection = var.deletion_protection_enabled
+
+  lifecycle {
+    ignore_changes = [
+      image,
+      ssh_keys,
+      user_data
+    ]
+  }
 }

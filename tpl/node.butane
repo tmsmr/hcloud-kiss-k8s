@@ -110,19 +110,6 @@ systemd:
       enabled: true
 %{endif }
 
-    - name: k3s-cleanup-failed-pods.service
-      enabled: true
-      contents: |
-        [Unit]
-        After=k3s.service
-        ConditionPathExists=/usr/local/bin/k3s
-        [Service]
-        Type=oneshot
-        Environment=KUBECONFIG=/etc/rancher/k3s/k3s.yaml
-        ExecStart=kubectl delete pods --field-selector status.phase=Failed -A --ignore-not-found=true
-        [Install]
-        WantedBy=multi-user.target
-
     - name: run-install-system-upgrade-controller.service
       enabled: true
       contents: |

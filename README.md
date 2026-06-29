@@ -41,7 +41,7 @@ resource "hcloud_ssh_key" "admin_key" {
 }
 
 module "k8s_node" {
-  source            = "git::https://github.com/tmsmr/hcloud-kiss-k8s.git?ref=v0.3.2"
+  source            = "git::https://github.com/tmsmr/hcloud-kiss-k8s.git?ref=v0.4.0"
   hcloud_ssh_key_id = hcloud_ssh_key.admin_key.id
 }
 
@@ -72,8 +72,6 @@ $ kubectl get nodes # and so on...
 `https://10.20.1.1:6443` to reach the Kubernetes API directly.
 
 ## Variables/Customization
-
-⚠️ Most of the variables force the node to be re-created when changed. Take care!
 
 | Variable Name                            | Type         | Default         | Description                                                          |
 |------------------------------------------|--------------|-----------------|----------------------------------------------------------------------|
