@@ -111,7 +111,7 @@ variable "vps_backups_enabled" {
 variable "bootstrap_image" {
   description = "Fedora image name for Hetzner Cloud bootstrap (must be compatible with hcloud-fcos-takeover)"
   type        = string
-  default     = "fedora-43"
+  default     = "fedora-44"
 }
 
 variable "node_shutdown_grace_period" {

@@ -12,7 +12,7 @@ what you need 😀.
 
 ## Components
 
-- [Hetzner Cloud VPS](https://www.hetzner.com/cloud): Depending on your needs starting at around 5 €/month.
+- [Hetzner Cloud VPS](https://www.hetzner.com/cloud): Depending on your needs starting at around 7 €/month.
 - [Fedora CoreOS](https://getfedora.org/en/coreos/): Minimal and immutable Linux distribution with nightly updates
   configured.
 - [WireGuard](https://www.wireguard.com/): Improved security for SSH and Kubernetes API access.
